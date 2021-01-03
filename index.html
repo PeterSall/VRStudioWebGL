@@ -1,92 +1,72 @@
 ﻿<!DOCTYPE html>
 <html lang="en-us">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Custom template | QWEQWQWEQWE</title>
-    <script src="Build/build.loader.js"></script>
-    <script>var unityInstance = UnityLoader.instantiate("unityContainer", "Build/UnityJS.json", { onProgress: UnityProgress });</script>
-    <style>
-        body {
-            text-align: center;
-        }
-
-        .webgl-content {
-            position: relative;
-        }
-
-            .webgl-content * {
-                border: 0;
-                margin: 0;
-                padding: 0;
-            }
-
-        .centered {
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        #unity-container {
-            margin-left: auto;
-            margin-right: auto;
-            z-index: -1;
-        }
-
-        .loader {
-            background-color: aliceblue;
-        }
-
-            .loader .progressbar {
-                background-color: steelblue;
-                border: 2px black solid;
-                border-radius: 10px;
-                position: absolute;
-                width: 50%;
-                height: 75px;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-            }
-
-            .loader .fill {
-                background-color: skyblue;
-                border-radius: 10px;
-                height: 100%;
-            }
-    </style>
-</head>
-<body>
-    <h2>Custom Unity Template</h2>
-    <!-- Unity Container -->
-    <div class="webgl-content">
-        <div class="centered" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px;">
-            <!-- Unity WebGL will be here -->
-            <div id="unity-container" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px;"></div>
-            <!-- This is a simple progress bar -->
-            <div id="loader" class="loader">
-                <div class="progressbar">
-                    <div id="fill" class="fill" style="width: 0%;"></div>
-                </div>
-            </div>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | VRStudioWebGL</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
+      </div>
+      <div id="unity-footer">
+          <div id="unity-webgl-logo"></div>
+          <div id="unity-fullscreen-button"></div>
+          <div id="unity-build-title">VRStudioWebGL</div>
+          <div><button type="button" onclick="myGameInstance.SendMessage('LoginWindow', 'SetAvatarURL', 'qweqweqweqwe');">Click Me!</button></div>
+      </div>
     </div>
-    <div><button type="button" onclick="unityInstance.SendMessage('LoginWindow', 'SetAvatarURL', 'qweqweqweqwe');">Click Me!</button></div>
-    <h3>Example made by</h3>
-    <p><a href="https://patrykgalach.com">Patryk Galach - Dev Blog</a></p>
+    <script>
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/build.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/build.data",
+        frameworkUrl: buildUrl + "/build.framework.js",
+        codeUrl: buildUrl + "/build.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "VRStudioWebGL",
+        productVersion: "0.1",
+      };
 
-    <script>// Custom progressbar function
-        function customProgress(unityInstance, progress) {
-            // Change fill of the progress bar
-            const fill = document.getElementById("fill");
-            fill.style.width = progress * 100 + "%";
-            // If loaded, remove loader
-            if (progress === 1) {
-                const loader = document.getElementById("loader");
-                loader.remove();
-            }
-        }</script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
 
-</body>
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+        config.devicePixelRatio = 1;
+      } else {
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
+      loadingBar.style.display = "block";
 
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+            myGameInstance = unityInstance;
+          loadingBar.style.display = "none";
+          fullscreenButton.onclick = () => {
+            unityInstance.SetFullscreen(1);
+          };
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
 </html>
