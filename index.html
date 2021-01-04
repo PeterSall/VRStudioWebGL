@@ -1,27 +1,25 @@
 ﻿<!DOCTYPE html>
 <html lang="en-us">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | VRStudioWebGL</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
+</head>
+<body>
+    <div style="overflow: scroll">
+        <div><button type="button" onclick="myGameInstance.SendMessage('LoginWindow', 'SetAvatarURL', 'qweqweqweqwe');">Click Me!</button></div>
+        <div class="rpm-container"></div>
+        <div id="unity-container" class="unity-desktop">
+            <canvas id="unity-canvas"></canvas>
+            <div id="unity-loading-bar">
+                <div id="unity-logo"></div>
+                <div id="unity-progress-bar-empty">
+                    <div id="unity-progress-bar-full"></div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div id="unity-footer">
-          <div id="unity-webgl-logo"></div>
-          <div id="unity-fullscreen-button"></div>
-          <div id="unity-build-title">VRStudioWebGL</div>
-          <div><button type="button" onclick="myGameInstance.SendMessage('LoginWindow', 'SetAvatarURL', 'qweqweqweqwe');">Click Me!</button></div>
-      </div>
     </div>
     <script>
       var buildUrl = "Build";
@@ -31,7 +29,7 @@
         frameworkUrl: buildUrl + "/build.framework.js",
         codeUrl: buildUrl + "/build.wasm",
         streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
+        companyName: "Triplefour",
         productName: "VRStudioWebGL",
         productVersion: "0.1",
       };
@@ -59,14 +57,37 @@
         }).then((unityInstance) => {
             myGameInstance = unityInstance;
           loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
         }).catch((message) => {
           alert(message);
         });
       };
       document.body.appendChild(script);
     </script>
-  </body>
+    <script>window.addEventListener("message", receiveMessage, false);
+
+        function receiveMessage(event) {
+            document.querySelector('.rpm-content').remove();
+            document.querySelector("#unity-container").style.display = "block";
+            myGameInstance.SendMessage('LoginWindow', 'SetAvatarURL', event.data);
+        }
+
+        function makeAvatar() {
+            let iframe = document.getElementById('iframe')
+
+            if (iframe) {
+                iframe.id = "iframe"
+                iframe.src = 'https://fullbody.readyplayer.me/';
+                iframe.className = 'rpm-content';
+                iframe.allow = "camera *; microphone *";
+            }
+            else {
+                iframe = document.createElement('iframe');
+                iframe.id = "iframe"
+                iframe.src = 'https://fullbody.readyplayer.me/';
+                iframe.className = 'rpm-content';
+                iframe.allow = "camera *; microphone *";
+                document.querySelector('.rpm-container').appendChild(iframe);
+            }
+        }</script>
+</body>
 </html>
